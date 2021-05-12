@@ -54,21 +54,105 @@ router.get('/', (req, res) => {
 });
 
 router.get('/todo/', (req, res) => {
-    db.collection('todo').get().then((querySnapshot) => {
-        const d = [];
+    db.collection('todo').orderBy('timestamp').get().then((querySnapshot) => {
+        const todoList = [];
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            // console.log(doc.id, " => ", doc.data());
+            todoList.push(doc.data());
+        });
+        res.send(todoList);
+    });
+});
+
+router.get('/todo/:date', (req, res) => {
+    db.collection('todo').where('date', '==', req.params.date).orderBy('timestamp').get().then((querySnapshot) => {
+        const todoList = [];
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
-            d.push(doc.data());
+            todoList.push(doc.data());
         });
-        res.send(d);
+        res.send(todoList);
     });
 });
+
+/*
+To test this GoTo Postman -> New Request -> enter localhost:3000/api/courses and select POST
+Now Goto Body -> raw -> select JSON -> type {"name" : **** } and hit SEND
+*/
+// app.post('/api/courses', (req, res) => {
+
+//     const { error } = validateCourse(req.body); //result.error
+//     if(error) return res.status(400).send(error.details[0].message);
+
+//     // if(req.body.name || req.body.name.length < 3) {
+//     //     //400 Bad Request
+//     //     res.status(400).send('Name is required and should be minimum 3 characters long!!');
+//     //     return ;
+//     // }
+//     const course = {
+//         id: courses.length + 1,
+//         name: req.body.name //Enable Parsing of JSON objects
+//     };
+//     courses.push(course);
+//     res.send(courses);
+// })
+
+router.post('/todo/', (req, res) => {
+    //for Error -->  return res.status(400).send("Error Occured")
+    if(req.body.message == '') return res.status(400).send("Error Occured!!");
+    const todo = {
+        timestamp: Date.now(),
+        date: dd_mm_yyyy(),
+        message: req.body.message,
+        checked: false
+    }
+
+    db.collection("todo").add(todo);
+    // res.send(todo);
+})
+
+router.put('/todo/:id', (req, res) => {
+    const todoList = [];
+    db.collection('todo').where('date', '==', '13-05-2021').orderBy('timestamp').get().then((querySnapshot) => {
+        let temp = {};
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            // console.log(doc.id, " => ", doc.data());
+            temp = doc.data();
+            temp.id = doc.id;
+            todoList.push(temp);
+        });
+        // res.send(d);
+        console.log(todoList.length);
+        if(req.params.id > todoList.length) return res.status(400).send("Invalid ToDo ID Entered!!");
+        const docId = todoList[req.params.id-1].id;
+
+        db.collection('todo').doc(docId).update({
+            checked: true
+        })
+        res.send("Task Completed Successfully!!");
+    })
+    .catch((error) => {
+        console.log("Error getting ToDo: ", error);
+    });
+    
+});
+
+function dd_mm_yyyy() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        var today = dd + '-' + mm + '-' + yyyy;
+        return today;
+}
 
 router.get('/:id', (req, res) => {
     res.send(req.params.id);
 })
-
-
 
 module.exports = router;
