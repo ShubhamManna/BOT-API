@@ -110,7 +110,8 @@ router.post('/todo/', (req, res) => {
     }
 
     db.collection("todo").add(todo);
-    // res.send(todo);
+    console.log('Task Added Successfully!!');
+    res.send(todo);
 })
 
 router.put('/todo/:id', (req, res) => {
