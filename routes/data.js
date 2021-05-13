@@ -10,6 +10,11 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+//For Timezone
+// var nDate = new Date().toLocaleString('en-US', {
+//     timeZone: 'Asia/Calcutta'
+//   });
+
 // gettodo().then(result => {
 //     console.log(result.body)
 //     const obj = JSON.parse(result.body);
@@ -54,7 +59,7 @@ router.post('/todo/', (req, res) => {
     if(req.body.message == '') return res.status(400).send("Error Occured!!");
     const todo = {
         timestamp: Date.now(),
-        date: dd_mm_yyyy(),
+        date: req.body.date,
         message: req.body.message,
         checked: false
     }
@@ -67,7 +72,7 @@ router.post('/todo/', (req, res) => {
 
 router.put('/todo/:id', (req, res) => {
     const todoList = [];
-    db.collection('todo').where('date', '==', `${dd_mm_yyyy()}`).orderBy('timestamp').get().then((querySnapshot) => {
+    db.collection('todo').where('date', '==', req.body.date).orderBy('timestamp').get().then((querySnapshot) => {
         let temp = {};
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
