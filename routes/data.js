@@ -65,9 +65,20 @@ router.post('/todo/', (req, res) => {
     }
     console.log(todo.date);
 
-    db.collection("todo").add(todo);
-    console.log('Task Added Successfully!!');
-    res.send(todo);
+    db.collection("todo").add(todo).then(() => {
+        db.collection('todo').where('date', '==', req.body.date).orderBy('timestamp').get().then((querySnapshot) => {
+            const todoList = [];
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                // console.log(doc.id, " => ", doc.data());
+                todoList.push(doc.data());
+            });
+            console.log('Task Added Successfully!!');
+            res.send(todoList);
+        });
+    });
+
+    // res.send(todo);
 })
 
 router.put('/todo/:id', (req, res) => {
