@@ -17,4 +17,5 @@ This is the REST API for the <a href='https://discord.com/api/oauth2/authorize?c
       </ul>
     </p>
   </ol>
+</p>
 In future, i wish to add more endpoints to this exisiting API so that the BOT can access more functionalities.
