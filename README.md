@@ -8,4 +8,13 @@ This is the REST API for the <a href='https://discord.com/api/oauth2/authorize?c
 <p>
   <ol>
     <li><a href='https://bot-api-thedssaved-gmailcom.vercel.app/data/todo/' target='_blank'>  /data/todo</a></li>
-    <p align="justify"> This endpoint is currently linked to my firebase, so any GET/POST/PUT affects my firebase firestore database. </p>
+    <p align="justify"> This endpoint is currently linked to my firebase, so any GET/POST/PUT request affects my firebase firestore database. 
+      <ul>
+        <li>A GET request to <code>/data/todo/</code> results in generating a JSON of all the of the ToDo items added.</li>
+        <li>A GET request to <code>/data/todo/:date</code> results in ToDo items only for a specified date.</li>
+        <li>A POST request to <code>/data/todo</code> with the reuired headers and body results in the addition of a new ToDo for the current date.</li>
+        <li>A PUT request to <code>/data/todo/:id</code> with the required headers and body results in completing a ToDo item.</li>
+      </ul>
+    </p>
+  </ol>
+In future, i wish to add more endpoints to this exisiting API so that the BOT can access more functionalities.
